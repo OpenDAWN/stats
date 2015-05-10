@@ -1,4 +1,4 @@
-# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) ![size](https://img.shields.io/badge/size-10.8kb-brightgreen.svg) [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 Stats.js for web-audio. [Demo](TODO).
 
@@ -14,13 +14,13 @@ Stats.js for web-audio. [Demo](TODO).
 ```js
 var Stats = require('web-audio-stats');
 
-var stats = new Stats(audio, context, options);
+var stats = new Stats(audio, context);
 
 document.body.appendChild(stats.element);
 ```
 
 
-### `Stats(element [, context])`
+### `Stats(audio, context)`
 
 Stats constructor. Returns a new stats controller.
 
@@ -28,7 +28,7 @@ Stats constructor. Returns a new stats controller.
 |---|---|
 | `context` | AudioContext object |
 
-### `Stats.prototype.mode([mode])`
+### `Stats.prototype.mode(mode)`
 
 Get or set mode of rendering
 
