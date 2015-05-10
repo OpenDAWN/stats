@@ -1,0 +1,72 @@
+<!doctype html>
+<meta charset="utf-8"/>
+
+<script src="./bundle.js"></script>
+<script>
+	var q = require('queried');
+	var on = require('emmy/on');
+</script>
+
+<style>
+	.play {
+		display: block;
+		width: 40px;
+		height: 40px;
+		border: 0;
+		background: none;
+		text-align: center;
+	}
+	.play:after{
+		content: "▶"
+	}
+	.play-pause:after{
+		content: "❙❙";
+		letter-spacing: -.5rem;
+		margin-left: -.7rem;
+	}
+</style>
+
+<section>
+	<audio src="./assets/chopin.mp3" class="audio"></audio>
+	<button class="play"></button>
+</section>
+
+<script>
+	var ctx = new AudioContext();
+
+	//Bind play button
+
+	var playBtn = q('.play');
+	var audioEl = q('.audio');
+
+	on(playBtn, 'click', function () {
+		if (audioEl.paused) {
+			audioEl.play();
+			playBtn.classList.add('play-pause');
+		}
+		else {
+			audioEl.pause();
+			playBtn.classList.remove('play-pause');
+		}
+	});
+
+
+	//Create volume controller
+
+	var gainNode = ctx.createGain();
+	gainNode.gain.value = 1; //1000000000;
+
+
+	//Hook up painter
+
+	var Stats = require('web-audio-stats');
+	var stats = new Stats(gainNode, ctx);
+	playBtn.parentNode.appendChild(stats.element);
+
+
+	//Connect audio nodes
+
+	var sourceNode = ctx.createMediaElementSource(audioEl);
+	sourceNode.connect(gainNode);
+	stats.connect(ctx.destination);
+</script>
