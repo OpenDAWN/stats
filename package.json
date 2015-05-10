@@ -1,7 +1,7 @@
 {
   "name": "web-audio-stats",
   "version": "1.0.0",
-  "description": "Stats.js for web audio",
+  "description": "Stats.js for web audio: frequency, waveform diagram",
   "main": "index.js",
   "scripts": {
   	"watch": "watchify -r ./index.js:web-audio-stats -r queried -r emmy/on -d -o ./bundle.js"
