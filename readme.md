@@ -1,9 +1,12 @@
-# Web-audio-stats
+# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) ![size](https://img.shields.io/badge/size-10.8kb-brightgreen.svg) [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
-Stats.js for web-audio.
+Stats.js for web-audio. [Demo](TODO).
 
 [Screenshots]
-[Demo]
+
+* Frequency diagram
+* Waveform diagram
+
 
 
 `$ npm install web-audio-frequency`
@@ -34,10 +37,5 @@ Get or set mode of rendering
 | `0` | Waveform |
 | `1` | Frequency |
 
-### `Stats.prototype.begin()`
 
-Begin collecting stats.
-
-### `Stats.prototype.end()`
-
-Stop plotting.
+[![NPM](https://nodei.co/npm/web-audio-stats.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/web-audio-stats/)
