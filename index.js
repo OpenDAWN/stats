@@ -115,9 +115,7 @@ proto.draw.frequency = function () {
 	//fill bars
 	ctx.fillStyle = "rgb(240,200,40)";
 
-	//44100 is too much, take 18000 at max
 	var Fs = this.audioCtx.sampleRate;
-	var Fmax = this.Fmax;
 	var iw = (sRect[2]) / data.length;
 	var ih;
 	for (var i = 0, l = data.length; i<l; i++) {
@@ -127,7 +125,7 @@ proto.draw.frequency = function () {
 
 	//show frequencies
 	// freq = i * Fsample / N;
-	//sampling rate should be divided 2 by fact
+	// sampling rate should be divided half to get real maximum frequency.
 	for (var i = 0; i < data.length; i+=100) {
 		ctx.fillText((i / 2 * Fs / data.length).toFixed(2), i * iw + sRect[0], h - 2);
 	}
