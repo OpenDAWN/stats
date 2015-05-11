@@ -71,14 +71,15 @@ function Stats (audio, ctx, options) {
 	this.ctx.fillRect(0,0, w, h);
 
 	//paint frequencies
+	this.ctx.fillStyle = "rgb(240,200,40)";
 	this.ctx.fillText(20, mapLog(20, sRect[2]) + sRect[0], h - 2);
 	this.ctx.fillText(200, mapLog(200, sRect[2]) + sRect[0], h - 2);
 	this.ctx.fillText(2000, mapLog(2000, sRect[2]) + sRect[0], h - 2);
 	this.ctx.fillText(20000, mapLog(20000, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(10, mapLog(10, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(100, mapLog(100, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(1000, mapLog(1000, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(10000, mapLog(10000, sRect[2]) + sRect[0], h - 2);
+	// this.ctx.fillText(10, mapLog(10, sRect[2]) + sRect[0], h - 2);
+	// this.ctx.fillText(100, mapLog(100, sRect[2]) + sRect[0], h - 2);
+	// this.ctx.fillText(1000, mapLog(1000, sRect[2]) + sRect[0], h - 2);
+	// this.ctx.fillText(10000, mapLog(10000, sRect[2]) + sRect[0], h - 2);
 
 
 	//render spectrum
@@ -199,6 +200,8 @@ var Fmin = 20;
 var Fmax = 20000;
 var decadesNum = lg(Fmax/Fmin);
 var decadeOffset = lg(Fmin/10);
+
+
 function mapLog(f, w){
 	var decadeW = w / decadesNum;
 	return lg(f) * decadeW - decadeW - decadeW * decadeOffset;
