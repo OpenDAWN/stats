@@ -5,6 +5,7 @@
 <script>
 	var q = require('queried');
 	var on = require('emmy/on');
+	var Draggable = require('draggy');
 </script>
 
 <style>
@@ -29,15 +30,16 @@
 <section>
 	<audio src="./assets/chopin.mp3" class="audio"></audio>
 	<button class="play"></button>
+	<input class="frequency" type="number" value="5000" min="0" max="20000"/>
 </section>
 
 <script>
 	var ctx = new AudioContext();
 
 	//Bind play button
-
 	var playBtn = q('.play');
 	var audioEl = q('.audio');
+	var freqEl = q('.frequency');
 
 	on(playBtn, 'click', function () {
 		if (audioEl.paused) {
@@ -51,22 +53,59 @@
 	});
 
 
-	//Create volume controller
+	//Create generator node
+	var oscNode = ctx.createOscillator();
+	oscNode.type = 'sine';
+	oscNode.frequency.value = 5000;
+	oscNode.start();
+	on(freqEl, 'change', function () {
+		oscNode.frequency.value = this.value;
+	});
 
+
+	//Create volume controller
 	var gainNode = ctx.createGain();
 	gainNode.gain.value = 1; //1000000000;
 
 
 	//Hook up painter
-
 	var Stats = require('web-audio-stats');
 	var stats = new Stats(gainNode, ctx);
 	playBtn.parentNode.appendChild(stats.element);
 
 
-	//Connect audio nodes
+	//Make draggable
+	new Draggable(stats.element);
 
+
+	//Create low-pass filter processor
+	var scriptNode = ctx.createScriptProcessor(1024, 1, 1);
+	on(scriptNode, 'audioprocess', function (e) {
+		var inputBuffer = e.inputBuffer;
+		var outputBuffer = e.outputBuffer;
+
+		// Loop through the output channels (in this case there is only one)
+		for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+			var inputData = inputBuffer.getChannelData(channel);
+			var outputData = outputBuffer.getChannelData(channel);
+
+			// Loop through the 1024 samples
+			for (var sample = 0; sample < inputBuffer.length; sample++) {
+				// make output equal to the same as the input
+				outputData[sample] = inputData[sample];
+
+				// add noise to each output sample
+				// outputData[sample] += Math.random() * .001;
+			}
+		}
+
+	});
+
+
+	//Connect audio nodes
 	var sourceNode = ctx.createMediaElementSource(audioEl);
-	sourceNode.connect(gainNode);
+	// oscNode.connect(scriptNode);
+	sourceNode.connect(scriptNode);
+	scriptNode.connect(gainNode);
 	stats.connect(ctx.destination);
 </script>

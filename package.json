@@ -4,7 +4,7 @@
   "description": "Stats.js for web audio: frequency, waveform diagram",
   "main": "index.js",
   "scripts": {
-  	"watch": "watchify -r ./index.js:web-audio-stats -r queried -r emmy/on -d -o ./bundle.js"
+    "watch": "watchify -r ./index.js:web-audio-stats -r queried -r emmy/on -r draggy -d -o ./bundle.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
     "spectrogram"
   ],
   "dependencies": {
+    "draggy": "^1.1.6"
   },
   "devDependencies": {
     "emmy": "^5.2.5",

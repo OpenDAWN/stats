@@ -36,6 +36,10 @@ function Stats (audio, ctx, options) {
 
 	this.analyser = ctx.createAnalyser();
 
+	//sample rate
+	this.audioCtx = ctx;
+	this.Fmax = 18000;
+
 	//create visual element
 	this.element = doc.createElement('canvas');
 	this.element.classList.add('web-audio-stats');
@@ -54,7 +58,7 @@ function Stats (audio, ctx, options) {
 	//render
 	function draw() {
 		requestAnimationFrame(draw);
-		self.draw.call(self);
+		self.draw[self.mode].call(self);
 	}
 	draw();
 }
@@ -74,10 +78,7 @@ proto.connect = function (target) {
 /**
  * Set mode of rendering
  */
-proto.mode = function (mode) {
-	this.mode = mode;
-	return this;
-};
+proto.mode = 'frequency';
 
 
 /** Show legend */
@@ -87,7 +88,11 @@ proto.legend = true;
 /**
  * Draw iteration
  */
-proto.draw = function () {
+proto.draw = {};
+
+
+/** Draw frequency domain */
+proto.draw.frequency = function () {
 	var ctx = this.ctx,
 		canvas = this.element,
 		w = canvas.width,
@@ -102,26 +107,40 @@ proto.draw = function () {
 	// Get the new frequency data
 	analyser.getByteFrequencyData(data);
 
-	//fill spectrum area
+	//spectrum area
 	var sRect = [10,10,w-20,h-20];
 	ctx.fillStyle = "rgba(240,200,40,.1)";
 	ctx.fillRect(sRect[0], sRect[1], sRect[2], sRect[3]);
 
 	//fill bars
 	ctx.fillStyle = "rgb(240,200,40)";
-	for (var i = 0, l = data.length, ih; i<l; i++) {
+
+	//44100 is too much, take 18000 at max
+	var Fs = this.audioCtx.sampleRate;
+	var Fmax = this.Fmax;
+	var iw = (sRect[2]) / data.length;
+	var ih;
+	for (var i = 0, l = data.length; i<l; i++) {
 		ih = (data[i] / 255) * sRect[3];
-		ctx.fillRect(i + sRect[0], sRect[3] - ih + sRect[1], 1, ih);
+		ctx.fillRect(i * iw + sRect[0], sRect[3] - ih + sRect[1], iw, ih);
 	}
 
 	//show frequencies
-	// freq = i * Fs / N;
-	//sample rate
-	var Fs = 44100;
+	// freq = i * Fsample / N;
+	//sampling rate should be divided 2 by fact
+	for (var i = 0; i < data.length; i+=100) {
+		ctx.fillText((i / 2 * Fs / data.length).toFixed(2), i * iw + sRect[0], h - 2);
+	}
+};
 
-	ctx.fillText((0 * Fs / data.length).toFixed(2), 0 + sRect[0], h - 2);
-	ctx.fillText((50 * Fs / data.length).toFixed(2), 50 + sRect[0], h - 2);
-	ctx.fillText((100 * Fs / data.length).toFixed(2), 100 + sRect[0], h - 2);
-	ctx.fillText((150 * Fs / data.length).toFixed(2), 150 + sRect[0], h - 2);
-	ctx.fillText((200 * Fs / data.length).toFixed(2), 200 + sRect[0], h - 2);
+
+/** Draw waveform domain */
+proto.draw.waveform = function () {
+
+};
+
+
+/** Draw spectrogram */
+proto.draw.spectrogram = function () {
+
 };
