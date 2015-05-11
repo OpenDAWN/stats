@@ -19,7 +19,8 @@
     "spectrogram"
   ],
   "dependencies": {
-    "draggy": "^1.1.6"
+    "draggy": "^1.1.6",
+    "piano-key": "^1.0.1"
   },
   "devDependencies": {
     "emmy": "^5.2.5",

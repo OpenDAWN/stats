@@ -30,8 +30,8 @@
 <section>
 	<audio src="./assets/chopin.mp3" class="audio"></audio>
 	<button class="play"></button>
-	<input class="frequency" type="number" value="5000" min="0" max="20000"/>
-	<input class="Q" type="number" value="5" min="0" max="100"/>
+	<input class="frequency" type="range" value="5000" min="0" max="20000"/>
+	<input class="Q" type="range" value="5" min="1" max="100"/>
 </section>
 
 <script>
@@ -81,7 +81,7 @@
 
 
 	//Create filter processor
-	var scriptNode = ctx.createScriptProcessor(4096, 1, 1);
+	var scriptNode = ctx.createScriptProcessor(512, 1, 1);
 
 	//buffers memory - last 2 items
 	var xm1 = [0,0], xm2 = [0,0], ym1 = [0,0], ym2 = [0,0];
@@ -103,11 +103,11 @@
 	}
 
 	//change params
-	on(qEl, 'change', function () {
+	on(qEl, 'input', function () {
 		Q = this.value;
 		calcFilterCoefs();
 	});
-	on(freqEl, 'change', function () {
+	on(freqEl, 'input', function () {
 		f0 = this.value;
 		calcFilterCoefs();
 	});
