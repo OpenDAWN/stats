@@ -1,6 +1,6 @@
 {
   "name": "web-audio-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stats.js for web audio: frequency, waveform diagram",
   "main": "index.js",
   "scripts": {
