@@ -1,4 +1,4 @@
-# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
 Stats.js for web-audio. [Demo](TODO).
 
@@ -14,19 +14,26 @@ Stats.js for web-audio. [Demo](TODO).
 ```js
 var Stats = require('web-audio-stats');
 
-var stats = new Stats(audio, context);
+var stats = new Stats(audioSource, context, options);
 
 document.body.appendChild(stats.element);
 ```
 
 
-### `Stats(audio, context)`
+### `Stats(audio, context[, options])`
 
 Stats constructor. Returns a new stats controller.
 
 | Option | Description |
 |---|---|
-| `context` | AudioContext object |
+| `Fmin` | Starting frequency to plot, by default `20`. |
+| `Fmax` | Maximum frequency to plot, by default `20000`. |
+| `mode` | `frequency` (default), `waveform`, `spectrogram`. |
+| `grid` | Display grid. |
+| `labels` | Display axis labels. |
+| `logScale` | Logarithmic scale. |
+| `align` | Align bars: `middle`, `top`, `bottom`. |
+| `color` | Bars color. Taken automatically as container’s css `color` property. |
 
 ### `Stats.prototype.mode(mode)`
 

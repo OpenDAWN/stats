@@ -1,7 +1,10 @@
 <!doctype html>
 <meta charset="utf-8"/>
 
+<link rel="stylesheet" type="text/css" href="./index.css"/>
+
 <script src="./bundle.js"></script>
+
 <script>
 	var q = require('queried');
 	var on = require('emmy/on');
@@ -58,7 +61,7 @@
 	//Create generator node
 	var oscNode = ctx.createOscillator();
 	oscNode.type = 'sine';
-	oscNode.frequency.value = 5000;
+	oscNode.frequency.value = 200;
 	oscNode.start();
 	on(freqEl, 'change', function () {
 		oscNode.frequency.value = this.value;
@@ -72,7 +75,7 @@
 
 	//Hook up painter
 	var Stats = require('web-audio-stats');
-	var stats = new Stats(gainNode, ctx);
+	var stats = new Stats(gainNode, ctx, {labels: false});
 	playBtn.parentNode.appendChild(stats.element);
 
 
@@ -101,7 +104,7 @@
 
 	//Connect audio nodes
 	var sourceNode = ctx.createMediaElementSource(audioEl);
-	// oscNode.connect(scriptNode);
+	// oscNode.connect(gainNode);
 	sourceNode.connect(filterNode);
 	filterNode.connect(gainNode);
 	stats.connect(ctx.destination);

@@ -6,6 +6,10 @@
  *
  */
 
+var lg = require('mumath/lg');
+var extend = require('xtend/mutable');
+var lifecycle = require('lifecycle-events');
+
 
 module.exports = Stats;
 
@@ -13,47 +17,57 @@ module.exports = Stats;
 var doc = document, win = window;
 
 
-var key = require('piano-key');
-
 
 /**
  * Options are omitted in purpose - use API to setup instance
  *
  * @constructor
  */
-function Stats (audio, ctx, options) {
+function Stats (audio, audioCtx, options) {
 	//ensure instance
-	if (!(this instanceof Stats)) return new Stats(el, ctx);
+	if (!(this instanceof Stats)) return new Stats(el, audioCtx, options);
 
 	var self = this;
+
+	//init options
+	options = options || {};
+	extend(self, options);
 
 	//ensure audio element
 	if (!(audio instanceof AudioNode)) {
 		this.audio = audio instanceof Audio
-		? ctx.createMediaElementSource(audio)
-		: ctx.createMediaStreamSource(audio);
+		? audioCtx.createMediaElementSource(audio)
+		: audioCtx.createMediaStreamSource(audio);
 	}
 	else {
 		this.audio = audio;
 	}
 
-	this.analyser = ctx.createAnalyser();
+	this.audioCtx = audioCtx;
 
-	//sample rate
-	this.audioCtx = ctx;
-	this.Fmax = 18000;
+	//create holder
+	this.element = doc.createElement('div');
+	this.element.classList.add('wa-stats');
 
-	//create visual element
-	this.element = doc.createElement('canvas');
-	this.element.classList.add('web-audio-stats');
-	this.element.width = 600;
-	this.element.height = 400;
-	this.ctx = this.element.getContext('2d');
-	this.analyser.smoothingTimeConstant = 0.7;
-	this.analyser.maxDecibels = -30;
-	this.analyser.minDecibels = -82;
+	lifecycle(this.element);
 
-	//get buffer freq data
+	//once element is inserted - update it’s calc styles
+	on(this.element, 'attached', function () {
+		self.recalcStyle();
+	});
+
+	//create canvas
+	this.canvas = doc.createElement('canvas');
+	this.canvas.classList.add('wa-stats-canvas');
+	this.canvasCtx = this.canvas.getContext('2d');
+	this.element.appendChild(this.canvas);
+	this.recalcStyle();
+
+	//create analyser node
+	this.analyser = audioCtx.createAnalyser();
+	this.analyser.smoothingTimeConstant = 0.8;
+	this.analyser.maxDecibels = -25;
+	this.analyser.minDecibels = -80;
 	this.analyser.fftSize = 8192;
 	this.bufferLength = this.analyser.frequencyBinCount;
 	this.data = new Uint8Array(this.bufferLength);
@@ -61,26 +75,21 @@ function Stats (audio, ctx, options) {
 	//connect audio to analyser
 	this.audio.connect(this.analyser);
 
-
-	//draw legend
-	var w = this.element.width, h = this.element.height;
-	var sRect = [10,10,w-20,h-20];
-
-	//fill bg
-	this.ctx.fillStyle = "rgba(30,40,50,1)";
-	this.ctx.fillRect(0,0, w, h);
+	//detect decades
+	this.decades = Math.round(lg(this.Fmax/this.Fmin));
+	this.decadeOffset = lg(this.Fmin/10);
 
 	//paint frequencies
-	this.ctx.fillStyle = "rgb(240,200,40)";
-	this.ctx.fillText(20, mapLog(20, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(200, mapLog(200, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(2000, mapLog(2000, sRect[2]) + sRect[0], h - 2);
-	this.ctx.fillText(20000, mapLog(20000, sRect[2]) + sRect[0], h - 2);
-	// this.ctx.fillText(10, mapLog(10, sRect[2]) + sRect[0], h - 2);
-	// this.ctx.fillText(100, mapLog(100, sRect[2]) + sRect[0], h - 2);
-	// this.ctx.fillText(1000, mapLog(1000, sRect[2]) + sRect[0], h - 2);
-	// this.ctx.fillText(10000, mapLog(10000, sRect[2]) + sRect[0], h - 2);
+	if (this.labels) {
+		this.canvasCtx.fillStyle = this.color;
 
+		//measure max metrics to shrink width
+		var metrics = this.canvasCtx.measureText(this.Fmax);
+
+		for (var i = 0, f = this.Fmin; i <= this.decades; i++, f*=10) {
+			this.canvasCtx.fillText(f, this.map(f, this.canvas.width - metrics.width), h - 2);
+		}
+	}
 
 	//render spectrum
 	function draw() {
@@ -105,11 +114,11 @@ proto.connect = function (target) {
 /**
  * Set mode of rendering
  */
-proto.mode = 'frequencyLog';
+proto.mode = 'frequency';
 
 
-/** Show legend */
-proto.legend = true;
+/** Show labels */
+proto.labels = true;
 
 
 /**
@@ -118,10 +127,10 @@ proto.legend = true;
 proto.draw = {};
 
 
-/** Draw frequency domain */
+/** Frequency grapher */
 proto.draw.frequency = function () {
-	var ctx = this.ctx,
-		canvas = this.element,
+	var ctx = this.canvasCtx,
+		canvas = this.canvas,
 		w = canvas.width,
 		h = canvas.height,
 		analyser = this.analyser,
@@ -130,86 +139,37 @@ proto.draw.frequency = function () {
 	// Get the new frequency data
 	analyser.getByteFrequencyData(data);
 
-	//spectrum area
-	var sRect = [10,10,w-20,h-20];
-	ctx.fillStyle = "rgba(30,40,50,1)";
-	ctx.fillRect(sRect[0], sRect[1], sRect[2], sRect[3]);
-	ctx.fillStyle = "rgba(240,200,40,.1)";
-	ctx.fillRect(sRect[0], sRect[1], sRect[2], sRect[3]);
+	//fill bg
+	ctx.clearRect(0,0,w,h);
+
+	//measure max metrics to shrink width
+	var metrics = this.canvasCtx.measureText(this.Fmax);
 
 	//fill bars
-	ctx.fillStyle = "rgb(240,200,40)";
-
-	var Fs = this.audioCtx.sampleRate;
-	var iw = (sRect[2]) / data.length;
-	var ih;
-	for (var i = 0, l = data.length; i<l; i++) {
-		ih = (data[i] / 255) * sRect[3];
-		ctx.fillRect(i * iw + sRect[0], sRect[3] - ih + sRect[1], 1, ih);
-	}
-
-	//show frequencies
-	// freq = i * Fsample / N;
-	// sampling rate should be divided half to get real maximum frequency.
-	for (var i = 0; i < data.length; i+=100) {
-		ctx.fillText((i / 2 * Fs / data.length).toFixed(2), i * iw + sRect[0], h - 2);
-	}
-};
-
-
-proto.draw.frequencyLog = function () {
-	var ctx = this.ctx,
-		canvas = this.element,
-		w = canvas.width,
-		h = canvas.height,
-		analyser = this.analyser,
-		data = this.data;
-
-	// Get the new frequency data
-	analyser.getByteFrequencyData(data);
-
-	//spectrum area
-	var sRect = [10,10,w-20,h-20];
-	ctx.fillStyle = "rgba(30,40,50,1)";
-	ctx.fillRect(sRect[0], sRect[1], sRect[2], sRect[3]);
-	ctx.fillStyle = "rgba(240,200,40,.1)";
-	ctx.fillRect(sRect[0], sRect[1], sRect[2], sRect[3]);
-
-	//fill bars
-	ctx.fillStyle = "rgba(240,200,40, 1)";
+	ctx.fillStyle = this.color;
 	var Fs = this.audioCtx.sampleRate;
 	var ih, f, x, iw, note, noteF;
 
 	for (var i = 0, l = data.length; i<l; i++) {
-		ih = (data[i] / 255) * sRect[3];
+		ih = (data[i] / 255) * h;
 		f = i * 0.5 * Fs / data.length;
-		x = mapLog(f, sRect[2]);
+		x = this.map(f, w - metrics.width);
 
-		//get note number from freq
-		// note = Math.round(key.number(f));
-		// noteF = key.frequency(note);
-
-		// iw = Math.round(mapLog(key.frequency(note+1), sRect[2]) - mapLog(key.frequency(note-1), sRect[2]));
-
-		ctx.fillRect(~~(x + sRect[0]), sRect[3] - ih + sRect[1], 1, ih);
+		ctx.fillRect(~~x, h - ih, 1, ih);
 	}
 };
 
+
 /** Map logarithmically frequency */
-var Fmin = 20;
-var Fmax = 20000;
-var decadesNum = lg(Fmax/Fmin);
-var decadeOffset = lg(Fmin/10);
+proto.Fmin = 20;
+proto.Fmax = 20000;
 
 
-function mapLog(f, w){
-	var decadeW = w / decadesNum;
-	return lg(f) * decadeW - decadeW - decadeW * decadeOffset;
-}
-
-function lg(f) {
-	return Math.log(f) / Math.log(10);
-}
+/** Map frequency to an x coord */
+proto.map = function (f, w) {
+	var decadeW = w / this.decades;
+	return lg(f) * decadeW - decadeW - decadeW * this.decadeOffset;
+};
 
 
 /** Draw waveform domain */
@@ -221,4 +181,12 @@ proto.draw.waveform = function () {
 /** Draw spectrogram */
 proto.draw.spectrogram = function () {
 
+};
+
+
+/** Recalc style from the element */
+proto.recalcStyle = function () {
+	this.color = getComputedStyle(this.element).color || 'black';
+	this.canvas.width = this.element.clientWidth;
+	this.canvas.height = this.element.clientHeight;
 };
