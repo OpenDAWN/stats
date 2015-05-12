@@ -51,16 +51,16 @@ function Stats (audio, audioCtx, options) {
 
 	lifecycle(this.element);
 
-	//once element is inserted - update it’s calc styles
-	on(this.element, 'attached', function () {
-		self.recalcStyle();
-	});
-
 	//create canvas
 	this.canvas = doc.createElement('canvas');
 	this.canvas.classList.add('wa-stats-canvas');
 	this.canvasCtx = this.canvas.getContext('2d');
 	this.element.appendChild(this.canvas);
+
+	//once canvas is inserted - update it’s calc styles
+	on(this.canvas, 'attached', function () {
+		self.recalcStyle();
+	});
 	this.recalcStyle();
 
 	//create analyser node
@@ -186,7 +186,8 @@ proto.draw.spectrogram = function () {
 
 /** Recalc style from the element */
 proto.recalcStyle = function () {
-	this.color = getComputedStyle(this.element).color || 'black';
-	this.canvas.width = this.element.clientWidth;
-	this.canvas.height = this.element.clientHeight;
+	this.color = getComputedStyle(this.canvas).color || 'black';
+	console.log(this.color)
+	this.canvas.width = this.canvas.clientWidth;
+	this.canvas.height = this.canvas.clientHeight;
 };

@@ -1,15 +1,20 @@
 /**
  * web-audio-stats styles.
  *
- * Canvas visual settings are taken from the container (.wa-stats) ones
- * such as width, height, color.
- *
  * So adjust the container styles, canvas will follow automatically
  */
 
 .wa-stats {
+	display: inline-block;
+	/*padding: 1px;*/
+	border: 1px solid;
+	/*color: rgb(240,200,40);*/
+	/*background: rgb(20,40,60);*/
+}
+
+.wa-stats-canvas{
+	display: block;
+	/*background: rgba(240,200,40, .1);*/
 	width: 200px;
 	height: 100px;
-	color: rgb(240,200,40);
-	background: rgb(20,40,60);
 }
