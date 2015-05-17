@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "watchify -r ./index.js:web-audio-stats -r queried -r emmy/on -r draggy -d -o ./bundle.js"
   },
+  "style": "index.css",
   "repository": {
     "type": "git",
     "url": "https://github.com/dfcreative/web-audio-stats"

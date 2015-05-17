@@ -22,27 +22,28 @@ document.body.appendChild(stats.element);
 
 ### `Stats(audio, context[, options])`
 
-Stats constructor. Returns a new stats controller.
+Stats constructor. Returns a new stats controller. Pass audio source - audio tag, stream or something else convertable to stream.
 
 | Option | Description |
 |---|---|
-| `Fmin` | Starting frequency to plot, by default `20`. |
-| `Fmax` | Maximum frequency to plot, by default `20000`. |
-| `mode` | `frequency` (default), `waveform`, `spectrogram`. |
+| `minFrequency` | Starting frequency to plot, by default `20`. |
+| `maxFrequency` | Maximum frequency to plot, by default `20000`. |
+| `minDecibels` | Minimum decibels to capture, by default `-90` |
+| `maxDecibels` | Maximum decibels to limit, by default `-30`. |
+| `mode` | , `frequency` (default), `waveform`, `spectrogram`. |
 | `grid` | Display grid. |
 | `labels` | Display axis labels. |
-| `logScale` | Logarithmic scale. |
+| `color` | Bars color. Taken automatically as container’s css `color` property. Better change css than pass an option :). |
+
+| `logX` | Logarithmic frequencies scale. |
+| `logY` | Logarithmic volume scale. |
 | `align` | Align bars: `middle`, `top`, `bottom`. |
-| `color` | Bars color. Taken automatically as container’s css `color` property. |
+| `orientation` | `x` or `y` - display plot horisontally or vertically |
 
-### `Stats.prototype.mode(mode)`
 
-Get or set mode of rendering
+### `Stats.prototype.update()`
 
-| Mode | Description |
-|---|---|
-| `0` | Waveform |
-| `1` | Frequency |
+Recalculate style, size and position.
 
 
 [![NPM](https://nodei.co/npm/web-audio-stats.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/web-audio-stats/)

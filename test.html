@@ -12,6 +12,9 @@
 </script>
 
 <style>
+	body{
+		font-family: sans-serif;
+	}
 	.play {
 		display: block;
 		width: 40px;
@@ -27,6 +30,9 @@
 		content: "❙❙";
 		letter-spacing: -.5rem;
 		margin-left: -.7rem;
+	}
+	.wa-stats{
+		/*background: rgba(239,240,240,1);*/
 	}
 </style>
 
@@ -75,7 +81,10 @@
 
 	//Hook up painter
 	var Stats = require('web-audio-stats');
-	var stats = new Stats(gainNode, ctx, {labels: false});
+	var stats = new Stats(gainNode, ctx, {
+		labels: true,
+		grid:true
+	});
 	playBtn.parentNode.appendChild(stats.element);
 
 
@@ -86,18 +95,52 @@
 	//Create filter processor
 	var filterNode = ctx.createBiquadFilter();
 
-	filterNode.type = 'lowpass';
+	filterNode.type = 'bandpass';
 	filterNode.Q.value = 5;
 	filterNode.frequency.value = 5000;
 
-	//change params
+	//changing params changes filter
 	on(qEl, 'input', function () {
 		filterNode.Q.value = this.value;
+		drawResponse();
 	});
 	on(freqEl, 'input', function () {
 		filterNode.frequency.value = this.value;
+		drawResponse();
 	});
 
+	//draw biquad filter response, BPF formulae
+	//H(s) = (s/Q) / (s^2 + s/Q + 1)
+	//ω=2πf/Fs
+	var canvas = stats.canvas.cloneNode();
+	canvas.height = 100;
+	canvas.width = 200;
+	stats.element.appendChild(canvas);
+	canvas.style.position = 'absolute';
+	canvas.style.top = 0;
+	function drawResponse () {
+		var cnvCtx = canvas.getContext('2d');
+		var width = canvas.width;
+		var height = canvas.height;
+		var w;
+		var Fs = stats.audioContext.sampleRate;
+		var y;
+		var Q = filterNode.Q.value;
+		cnvCtx.clearRect(0,0,width,height);
+		var wp = 2 * Math.PI * filterNode.frequency.value / Fs;
+
+		cnvCtx.beginPath();
+		cnvCtx.moveTo(-10, height);
+		cnvCtx.strokeStyle = 'rgb(0,0,0)';
+		for (var f = stats.minFrequency; f < stats.maxFrequency; f += 10 ) {
+			w = 2 * Math.PI * f / Fs;
+			y = 1 / Math.sqrt( (1 - w*w/(wp*wp))*(1 - w*w/(wp*wp)) + (w/(Q*wp))*(w/(Q*wp)) );
+			cnvCtx.lineTo(stats.map(f, width), height - y * 10);
+		};
+		cnvCtx.stroke();
+	};
+
+	drawResponse();
 
 
 

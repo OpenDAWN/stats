@@ -1,20 +1,53 @@
 /**
  * web-audio-stats styles.
- *
- * So adjust the container styles, canvas will follow automatically
  */
 
 .wa-stats {
+	position: relative;
 	display: inline-block;
-	/*padding: 1px;*/
-	border: 1px solid;
-	/*color: rgb(240,200,40);*/
-	/*background: rgb(20,40,60);*/
 }
 
+/** Canvas style is read in code, so adjust painting style by varying color and size */
 .wa-stats-canvas{
 	display: block;
-	/*background: rgba(240,200,40, .1);*/
 	width: 200px;
 	height: 100px;
+}
+
+/** Decorative elements repeat canvas’s size */
+.wa-stats-grid{
+	position: absolute;
+	width: 200px;
+	height: 100px;
+	top: 0;
+	left: 0;
+	opacity: .2;
+}
+.wa-stats-line{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+}
+.wa-stats-line-h{
+	border-right: 1px dotted;
+	height: 100%;
+}
+.wa-stats-line-v{
+	border-bottom: 1px dotted;
+	width: 100%;
+}
+
+.wa-stats-labels {
+	position: relative;
+	display: block;
+	width: 200px;
+	font-size: 11px;
+}
+.wa-stats-label {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	text-indent: -1ex;
 }
