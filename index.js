@@ -108,15 +108,16 @@ function Stats (audio, audioContext, options) {
 			this.grid.appendChild(line);
 		}
 
-		//show magnitude limits
-		// for (var m = this.minDecibels; m <= this.maxDecibels; m += 10) {
-		// 	var line = doc.createElement('span');
-		// 	line.classList.add('wa-stats-line');
-		// 	line.classList.add('wa-stats-line-v');
-		// 	line.setAttribute('data-magnitude', m);
-		// 	line.style.top = m;
-		// 	this.grid.appendChild(line);
-		// }
+		//draw magnitude limits
+		var mRange = this.maxDecibels - this.minDecibels;
+		for (var m = this.minDecibels, i = 0; m <= this.maxDecibels; m += 10, i += 10) {
+			var line = doc.createElement('span');
+			line.classList.add('wa-stats-line');
+			line.classList.add('wa-stats-line-v');
+			line.setAttribute('data-magnitude', m);
+			line.style.bottom = 100 * i / mRange + '%';
+			this.grid.appendChild(line);
+		}
 
 		this.element.appendChild(this.grid);
 	}

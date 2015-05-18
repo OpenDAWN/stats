@@ -67,11 +67,11 @@
 	//Create generator node
 	var oscNode = ctx.createOscillator();
 	oscNode.type = 'sine';
-	oscNode.frequency.value = 200;
+	oscNode.frequency.value = 1000;
 	oscNode.start();
-	on(freqEl, 'change', function () {
-		oscNode.frequency.value = this.value;
-	});
+	// on(freqEl, 'change', function () {
+	// 	oscNode.frequency.value = this.value;
+	// });
 
 
 	//Create volume controller
@@ -95,9 +95,10 @@
 	//Create filter processor
 	var filterNode = ctx.createBiquadFilter();
 
-	filterNode.type = 'bandpass';
+	filterNode.type = 'peaking';
 	filterNode.Q.value = 5;
 	filterNode.frequency.value = 5000;
+	filterNode.gain.value = 20;
 
 	//changing params changes filter
 	on(qEl, 'input', function () {
@@ -124,19 +125,28 @@
 		var height = canvas.height;
 		var w;
 		var Fs = stats.audioContext.sampleRate;
+		var gain = filterNode.gain.value;
 		var y;
 		var Q = filterNode.Q.value;
 		cnvCtx.clearRect(0,0,width,height);
 		var w0 = 2 * Math.PI * filterNode.frequency.value / Fs;
 
-		//calc BPF coefs
 		var alpha = Math.sin(w0)/(2*Q)
-		var b0 =   alpha
-		var b1 =   0
-		var b2 =  -alpha
-		var a0 =   1 + alpha
-		var a1 =  -2*Math.cos(w0)
-		var a2 =   1 - alpha
+		var A  = Math.pow(10, (gain/40))
+		var b0,b1,b2,a0,a1,a2;
+		//BPF
+		// b0 =   alpha
+		// b1 =   0
+		// b2 =  -alpha
+		// a0 =   1 + alpha
+		// a1 =  -2*Math.cos(w0)
+		// a2 =   1 - alpha
+		b0 =   1 + alpha*A
+		b1 =  -2*Math.cos(w0)
+		b2 =   1 - alpha*A
+		a0 =   1 + alpha/A
+		a1 =  -2*Math.cos(w0)
+		a2 =   1 - alpha/A
 
 		cnvCtx.beginPath();
 		cnvCtx.moveTo(-10, height);
@@ -148,7 +158,7 @@
 				(b0*b0 + b1*b1 + b2*b2 + 2*(b0*b1 + b1*b2)*Math.cos(w) + 2*b0*b2*Math.cos(2*w) ) /
 				(1 + a1*a1 + a2*a2 + 2*(a1 + a1*a2)*Math.cos(w) + 2*a2*Math.cos(2*w))
 			);
-			cnvCtx.lineTo(stats.map(f, width), height - y * 30);
+			cnvCtx.lineTo(stats.map(f, width), height/2 - y);
 		};
 		cnvCtx.stroke();
 	};
@@ -160,7 +170,7 @@
 
 	//Connect audio nodes
 	var sourceNode = ctx.createMediaElementSource(audioEl);
-	// oscNode.connect(gainNode);
+	// oscNode.connect(filterNode);
 	sourceNode.connect(filterNode);
 	filterNode.connect(gainNode);
 	stats.connect(ctx.destination);
