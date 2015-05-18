@@ -166,13 +166,25 @@ proto.draw.frequency = function () {
 	var Fs = this.audioContext.sampleRate;
 	var ih, f, x, iw, note, noteF;
 
-	for (var i = 0, l = data.length; i<l; i++) {
-		ih = (data[i] / 255) * h;
-		f = i * 0.5 * Fs / data.length;
-		x = this.map(f, w);
+	//walk by each pixel
+	for (var x = 0, f, i, dl, dr, diff; x<w; x++) {
+		f = this.unmap(x, w);
+		i = 2 * f * data.length / Fs;
+		dl = data[Math.floor(i)];
+		dr = data[Math.ceil(i)];
 
-		ctx.fillRect(~~x, h - ih, 1, ih);
+		ih = ((dr*(i%1)  + dl*(1 - i%1)) / 255) * h;
+		ctx.fillRect(x, h - ih, 1, ih);
 	}
+
+	//walk by frequencies
+	// for (var i = 0, l = data.length; i<l; i++) {
+	// 	ih = (data[i] / 255) * h;
+	// 	f = i * 0.5 * Fs / data.length;
+	// 	x = this.map(f, w);
+
+	// 	ctx.fillRect(~~x, h - ih, 1, ih);
+	// }
 };
 
 
@@ -189,15 +201,14 @@ proto.minDecibels = -90;
 /** Map frequency to an x coord */
 proto.map = function (f, w) {
 	var decadeW = w / this.decades;
-	return lg(f) * decadeW - decadeW - decadeW * this.decadeOffset;
+	return decadeW * (lg(f) - 1 - this.decadeOffset);
 };
 
 
 /** Map x coord to a frequency */
 proto.unmap = function (x, w) {
 	var decadeW = w / this.decades;
-	//TODO
-	return ;
+	return Math.pow(10, x/decadeW + 1 + this.decadeOffset);
 };
 
 
