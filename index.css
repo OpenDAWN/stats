@@ -32,22 +32,29 @@
 .wa-stats-line-h{
 	border-right: 1px dotted;
 	height: 100%;
+	width: 0px;
+}
+.wa-stats-line-h:after{
+	content: attr(data-frequency);
+	position: absolute;
+	bottom: -15px;
+	left: 0;
+	height: 15px;
+	line-height: 15px;
+	font-size: 12px;
 }
 .wa-stats-line-v{
 	border-bottom: 1px dotted;
 	width: 100%;
+	top: auto;
+	height: 0;
 }
-
-.wa-stats-labels {
-	position: relative;
-	display: block;
-	width: 200px;
-	font-size: 11px;
-}
-.wa-stats-label {
-	display: block;
+.wa-stats-line-v:after{
+	content: attr(data-magnitude);
 	position: absolute;
-	top: 0;
-	left: 0;
-	text-indent: -1ex;
+	left: -20px;
+	top: -6px;
+	height: 15px;
+	line-height: 15px;
+	font-size: 12px;
 }

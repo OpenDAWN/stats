@@ -32,7 +32,6 @@ Stats constructor. Returns a new stats controller. Pass audio source - audio tag
 | `maxDecibels` | Maximum decibels to limit, by default `-30`. |
 | `mode` | , `frequency` (default), `waveform`, `spectrogram`. |
 | `grid` | Display grid. |
-| `labels` | Display axis labels. |
 | `color` | Bars color. Taken automatically as container’s css `color` property. Better change css than pass an option :). |
 
 | `logX` | Logarithmic frequencies scale. |

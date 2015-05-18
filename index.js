@@ -77,22 +77,6 @@ function Stats (audio, audioContext, options) {
 	this.decades = Math.round(lg(this.maxFrequency/this.minFrequency));
 	this.decadeOffset = lg(this.minFrequency/10);
 
-	//add frequencies
-	if (this.labels) {
-		this.labels = doc.createElement('div');
-		this.labels.classList.add('wa-stats-labels');
-
-		for (var i = 0, f = this.minFrequency; i <= this.decades; i++, f*=10) {
-			var label = doc.createElement('span');
-			label.classList.add('wa-stats-label');
-			label.innerHTML = f;
-			label.setAttribute('data-frequency', f);
-			label.style.left = this.map(f, 100) + '%';
-			this.labels.appendChild(label);
-		}
-
-		this.element.appendChild(this.labels);
-	}
 
 	if (this.grid) {
 		this.grid = doc.createElement('div');
@@ -206,6 +190,14 @@ proto.minDecibels = -90;
 proto.map = function (f, w) {
 	var decadeW = w / this.decades;
 	return lg(f) * decadeW - decadeW - decadeW * this.decadeOffset;
+};
+
+
+/** Map x coord to a frequency */
+proto.unmap = function (x, w) {
+	var decadeW = w / this.decades;
+	//TODO
+	return ;
 };
 
 
