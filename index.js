@@ -9,6 +9,7 @@
 var lg = require('mumath/lg');
 var extend = require('xtend/mutable');
 var lifecycle = require('lifecycle-events');
+var Emitter = require('events');
 
 
 module.exports = Stats;
@@ -110,12 +111,13 @@ function Stats (audio, audioContext, options) {
 	function draw() {
 		requestAnimationFrame(draw);
 		self.draw[self.mode].call(self);
+		self.emit('draw');
 	}
 	draw();
 }
 
 
-var proto = Stats.prototype;
+var proto = Stats.prototype = Object.create(Emitter.prototype);
 
 
 /**
