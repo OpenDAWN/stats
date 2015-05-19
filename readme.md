@@ -30,14 +30,8 @@ Stats constructor. Returns a new stats controller. Pass audio source - audio tag
 | `maxFrequency` | Maximum frequency to plot, by default `20000`. |
 | `minDecibels` | Minimum decibels to capture, by default `-90` |
 | `maxDecibels` | Maximum decibels to limit, by default `-30`. |
-| `mode` | , `frequency` (default), `waveform`, `spectrogram`. |
-| `grid` | Display grid. |
-| `color` | Bars color. Taken automatically as container’s css `color` property. Better change css than pass an option :). |
-
-| `logX` | Logarithmic frequencies scale. |
-| `logY` | Logarithmic volume scale. |
-| `align` | Align bars: `middle`, `top`, `bottom`. |
-| `orientation` | `x` or `y` - display plot horisontally or vertically |
+| `mode` | `frequency` (default), `waveform`, `spectrogram`. |
+| `grid` | Display frequencies/decibels grid. |
 
 
 ### `Stats.prototype.update()`
