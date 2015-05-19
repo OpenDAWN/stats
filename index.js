@@ -44,7 +44,7 @@ function Stats (audio, audioContext, options) {
 	this.audioContext = audioContext;
 
 	//create holder
-	this.element = doc.createElement('div');
+	if (!this.element) this.element = doc.createElement('div');
 	this.element.classList.add('wa-stats');
 
 	//create canvas

@@ -82,7 +82,6 @@
 	//Hook up painter
 	var Stats = require('web-audio-stats');
 	var stats = new Stats(gainNode, ctx, {
-		labels: true,
 		grid:true
 	});
 	playBtn.parentNode.appendChild(stats.element);
