@@ -12,7 +12,7 @@ Web-audio stats grapher.
 
 ## Usage
 
-[![npm install audio-stats](https://nodei.co/npm/audio-stats.png?mini=true)](https://nodei.co/npm/audio-stats/)
+[![npm install audio-stats](https://nodei.co/npm/audio-stats.png?mini=true)](https://npmjs.org/package/audio-stats/)
 
 
 ```js
