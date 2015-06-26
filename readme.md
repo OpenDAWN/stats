@@ -1,4 +1,6 @@
-[![Demo](https://raw.githubusercontent.com/dfcreative/audio-stats/logo.png)](https://dfcreative.github.io/audio-stats)
+[![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+
+[![Demo](https://raw.githubusercontent.com/dfcreative/audio-stats/master/logo.png)](https://dfcreative.github.io/audio-stats)
 
 Web-audio stats grapher.
 
@@ -7,7 +9,6 @@ Web-audio stats grapher.
 * [ ] Waveform
 * [ ] Wavelet
 
-[![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
 
 
