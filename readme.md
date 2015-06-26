@@ -1,8 +1,8 @@
-[![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
-
 [![Demo](https://raw.githubusercontent.com/dfcreative/audio-stats/master/logo.png)](https://dfcreative.github.io/audio-stats)
 
 Web-audio stats grapher.
+
+[![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
 * [x] Spectrum
 * [ ] Spectrogram
@@ -10,7 +10,7 @@ Web-audio stats grapher.
 * [ ] Wavelet
 
 
-
+## Usage
 
 [![npm install audio-stats](https://nodei.co/npm/audio-stats.png?mini=true)](https://nodei.co/npm/audio-stats/)
 
@@ -26,6 +26,8 @@ stats.node.connect(context.destination);
 document.body.appendChild(stats.element);
 ```
 
+
+## API
 
 ### `Stats(options?)`
 
@@ -45,6 +47,6 @@ Creates stats controller.
 Recalculate style, size and position.
 
 
-### `Stats.prototype.on('draw', function (canvas) { /* Draw on canvas */ })`
+### `Stats.prototype.on('draw', function (canvas) {})`
 
 Hook for drawing additional info on the canvas.
