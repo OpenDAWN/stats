@@ -4,21 +4,24 @@
 
 .audio-stats {
 	position: relative;
-	display: inline-block;
+	min-height: 100px;
+	min-width: 150px;
 }
 
 /** Canvas style is read in code, so adjust painting style by varying color and size */
 .audio-stats-canvas {
-	display: block;
-	width: 200px;
-	height: 100px;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
 }
 
 /** Decorative elements repeat canvas’s size */
 .audio-stats-grid {
 	position: absolute;
-	width: 200px;
-	height: 100px;
+	width: 100%;
+	height: 100%;
 	top: 0;
 	left: 0;
 }
