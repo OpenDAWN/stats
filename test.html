@@ -44,7 +44,7 @@
 </section>
 
 <script>
-	var ctx = new AudioContext();
+	var ctx = require('audio-context');
 
 	//Bind play button
 	var playBtn = q('.play');
@@ -80,10 +80,8 @@
 
 
 	//Hook up painter
-	var Stats = require('web-audio-stats');
-	var stats = new Stats(gainNode, ctx, {
-		grid:true
-	});
+	var Stats = require('audio-stats');
+	var stats = new Stats();
 	playBtn.parentNode.appendChild(stats.element);
 
 
@@ -102,23 +100,17 @@
 	//changing params changes filter
 	on(qEl, 'input', function () {
 		filterNode.Q.value = this.value;
-		drawResponse();
 	});
 	on(freqEl, 'input', function () {
 		filterNode.frequency.value = this.value;
-		drawResponse();
 	});
 
 	//draw biquad filter response, BPF formulae
 	//http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
 	//ω=2πf/Fs
-	var canvas = stats.canvas.cloneNode();
-	canvas.height = 100;
-	canvas.width = 200;
-	stats.element.appendChild(canvas);
-	canvas.style.position = 'absolute';
-	canvas.style.top = 0;
-	function drawResponse () {
+	stats.on('draw', drawResponse);
+
+	function drawResponse (canvas) {
 		var cnvCtx = canvas.getContext('2d');
 		var width = canvas.width;
 		var height = canvas.height;
@@ -128,7 +120,6 @@
 		var gainRange = stats.maxDecibels - stats.minDecibels;
 		var y, yDb;
 		var Q = filterNode.Q.value;
-		cnvCtx.clearRect(0,0,width,height);
 		var w0 = 2 * Math.PI * filterNode.frequency.value / Fs;
 
 		var alpha = Math.sin(w0)/(2*Q)
@@ -181,10 +172,7 @@
 
 			return (gain > 0 ? -yDb : yDb);
 		}
-	};
-
-	drawResponse();
-
+	}
 
 
 
@@ -193,5 +181,6 @@
 	// oscNode.connect(filterNode);
 	sourceNode.connect(filterNode);
 	filterNode.connect(gainNode);
+	gainNode.connect(stats.node);
 	stats.connect(ctx.destination);
 </script>

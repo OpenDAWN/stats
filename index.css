@@ -2,39 +2,39 @@
  * web-audio-stats styles.
  */
 
-.wa-stats {
+.audio-stats {
 	position: relative;
 	display: inline-block;
 }
 
 /** Canvas style is read in code, so adjust painting style by varying color and size */
-.wa-stats-canvas{
+.audio-stats-canvas {
 	display: block;
 	width: 200px;
 	height: 100px;
 }
 
 /** Decorative elements repeat canvas’s size */
-.wa-stats-grid{
+.audio-stats-grid {
 	position: absolute;
 	width: 200px;
 	height: 100px;
 	top: 0;
 	left: 0;
 }
-.wa-stats-line{
+.audio-stats-line {
 	/*opacity: .2;*/
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 0;
 }
-.wa-stats-line-h{
+.audio-stats-line-h {
 	border-right: 1px dotted;
 	height: 100%;
 	width: 0px;
 }
-.wa-stats-line-h:after{
+.audio-stats-line-h:after {
 	content: attr(data-frequency);
 	position: absolute;
 	bottom: -15px;
@@ -43,13 +43,13 @@
 	line-height: 15px;
 	font-size: 12px;
 }
-.wa-stats-line-v{
+.audio-stats-line-v {
 	border-bottom: 1px dotted;
 	width: 100%;
 	top: auto;
 	height: 0;
 }
-.wa-stats-line-v:after{
+.audio-stats-line-v:after {
 	content: attr(data-magnitude);
 	position: absolute;
 	left: -20px;

@@ -1,18 +1,18 @@
 {
-  "name": "web-audio-stats",
+  "name": "audio-stats",
   "version": "1.1.3",
   "description": "Stats.js for web audio: frequency, waveform diagram",
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -r ./index.js:web-audio-stats -r queried -r emmy/on -r draggy -d -o ./bundle.js"
+    "watch": "watchify -r ./index.js:audio-stats -r audio-context -r queried -r emmy/on -r draggy -d -o ./bundle.js"
   },
   "style": "index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dfcreative/web-audio-stats"
+    "url": "https://github.com/dfcreative/audio-stats"
   },
   "keywords": [
-    "web-audio",
+    "audio",
     "stats",
     "frequency",
     "waveform",
@@ -20,21 +20,22 @@
     "spectrogram"
   ],
   "dependencies": {
+    "audio-context": "^0.1.0",
     "draggy": "^1.1.6",
+    "emmy": "^5.2.5",
     "lifecycle-events": "^1.0.3",
     "mumath": "^1.0.2",
     "piano-key": "^1.0.1",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
-    "emmy": "^5.2.5",
     "queried": "^1.4.1",
     "watchify": "^3.2.1"
   },
   "author": "Deema Ywanov <dfcreative@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dfcreative/web-audio-stats/issues"
+    "url": "https://github.com/dfcreative/audio-stats/issues"
   },
-  "homepage": "https://github.com/dfcreative/web-audio-stats"
+  "homepage": "https://github.com/dfcreative/audio-stats"
 }

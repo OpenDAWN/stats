@@ -10,6 +10,8 @@ var lg = require('mumath/lg');
 var extend = require('xtend/mutable');
 var lifecycle = require('lifecycle-events');
 var Emitter = require('events');
+var on = require('emmy/on');
+var audioContext = require('audio-context');
 
 
 module.exports = Stats;
@@ -22,9 +24,9 @@ var doc = document, win = window;
 /**
  * @constructor
  */
-function Stats (audio, audioContext, options) {
+function Stats (options) {
 	//ensure instance
-	if (!(this instanceof Stats)) return new Stats(el, audioContext, options);
+	if (!(this instanceof Stats)) return new Stats(el, options);
 
 	var self = this;
 
@@ -32,25 +34,15 @@ function Stats (audio, audioContext, options) {
 	options = options || {};
 	extend(self, options);
 
-	//ensure audio element
-	if (!(audio instanceof AudioNode)) {
-		this.audio = audio instanceof Audio
-		? audioContext.createMediaElementSource(audio)
-		: audioContext.createMediaStreamSource(audio);
-	}
-	else {
-		this.audio = audio;
-	}
-
 	this.audioContext = audioContext;
 
 	//create holder
 	if (!this.element) this.element = doc.createElement('div');
-	this.element.classList.add('wa-stats');
+	this.element.classList.add('audio-stats');
 
 	//create canvas
 	this.canvas = doc.createElement('canvas');
-	this.canvas.classList.add('wa-stats-canvas');
+	this.canvas.classList.add('audio-stats-canvas');
 	this.canvasContext = this.canvas.getContext('2d');
 	this.element.appendChild(this.canvas);
 
@@ -62,56 +54,57 @@ function Stats (audio, audioContext, options) {
 	});
 	this.update();
 
-	//create analyser node
-	this.analyser = audioContext.createAnalyser();
-	this.analyser.smoothingTimeConstant = 0.8;
-	this.analyser.maxDecibels = this.maxDecibels;
-	this.analyser.minDecibels = this.minDecibels;
-	this.analyser.fftSize = 8192;
-	this.bufferLength = this.analyser.frequencyBinCount;
-	this.data = new Uint8Array(this.bufferLength);
+	//update on win resize
+	on(win, 'resize', function () {
 
-	//connect audio to analyser
-	this.audio.connect(this.analyser);
+	});
+
+	//create analyser node
+	this.node = audioContext.createAnalyser();
+	this.node.smoothingTimeConstant = 0.8;
+	this.node.maxDecibels = this.maxDecibels;
+	this.node.minDecibels = this.minDecibels;
+	this.node.fftSize = 8192;
+	this.bufferLength = this.node.frequencyBinCount;
+	this.data = new Uint8Array(this.bufferLength);
 
 	//detect decades
 	this.decades = Math.round(lg(this.maxFrequency/this.minFrequency));
 	this.decadeOffset = lg(this.minFrequency/10);
 
+	//display grid
+	this.grid = doc.createElement('div');
+	this.grid.classList.add('audio-stats-grid');
 
-	if (this.grid) {
-		this.grid = doc.createElement('div');
-		this.grid.classList.add('wa-stats-grid');
-
-		//show frequencies
-		for (var f = this.minFrequency; f <= this.maxFrequency; f*=10) {
-			var line = doc.createElement('span');
-			line.classList.add('wa-stats-line');
-			line.classList.add('wa-stats-line-h');
-			line.setAttribute('data-frequency', f);
-			line.style.left = this.map(f, 100) + '%';
-			this.grid.appendChild(line);
-		}
-
-		//draw magnitude limits
-		var mRange = this.maxDecibels - this.minDecibels;
-		for (var m = this.minDecibels, i = 0; m <= this.maxDecibels; m += 10, i += 10) {
-			var line = doc.createElement('span');
-			line.classList.add('wa-stats-line');
-			line.classList.add('wa-stats-line-v');
-			line.setAttribute('data-magnitude', m);
-			line.style.bottom = 100 * i / mRange + '%';
-			this.grid.appendChild(line);
-		}
-
-		this.element.appendChild(this.grid);
+	//show frequencies
+	for (var f = this.minFrequency; f <= this.maxFrequency; f*=10) {
+		var line = doc.createElement('span');
+		line.classList.add('audio-stats-line');
+		line.classList.add('audio-stats-line-h');
+		line.setAttribute('data-frequency', f);
+		line.style.left = this.map(f, 100) + '%';
+		this.grid.appendChild(line);
 	}
+
+	//draw magnitude limits
+	var mRange = this.maxDecibels - this.minDecibels;
+	for (var m = this.minDecibels, i = 0; m <= this.maxDecibels; m += 10, i += 10) {
+		var line = doc.createElement('span');
+		line.classList.add('audio-stats-line');
+		line.classList.add('audio-stats-line-v');
+		line.setAttribute('data-magnitude', m);
+		line.style.bottom = 100 * i / mRange + '%';
+		this.grid.appendChild(line);
+	}
+
+	this.element.appendChild(this.grid);
+
 
 	//render spectrum
 	function draw() {
 		requestAnimationFrame(draw);
-		self.draw[self.mode].call(self);
-		self.emit('draw');
+		self.draw();
+		self.emit('draw', self.canvas);
 	}
 	draw();
 }
@@ -124,37 +117,17 @@ var proto = Stats.prototype = Object.create(Emitter.prototype);
  * Connect analyser to a target.
  */
 proto.connect = function (target) {
-	this.analyser.connect(target);
+	this.node.connect(target);
 };
 
 
-/**
- * Set mode of rendering
- */
-proto.mode = 'frequency';
-
-
-/** Show labels */
-proto.labels = true;
-
-
-/** Display frequencies grid */
-proto.grid = true;
-
-
-/**
- * Draw iteration
- */
-proto.draw = {};
-
-
 /** Frequency grapher */
-proto.draw.frequency = function () {
+proto.draw = function () {
 	var ctx = this.canvasContext,
 		canvas = this.canvas,
 		w = canvas.width,
 		h = canvas.height,
-		analyser = this.analyser,
+		analyser = this.node,
 		data = this.data;
 
 	// Get the new frequency data
@@ -211,18 +184,6 @@ proto.map = function (f, w) {
 proto.unmap = function (x, w) {
 	var decadeW = w / this.decades;
 	return Math.pow(10, x/decadeW + 1 + this.decadeOffset);
-};
-
-
-/** Draw waveform domain */
-proto.draw.waveform = function () {
-
-};
-
-
-/** Draw spectrogram */
-proto.draw.spectrogram = function () {
-
 };
 
 

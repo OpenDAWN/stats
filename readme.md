@@ -1,28 +1,34 @@
-# Web-audio-stats [![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+[![Demo](https://raw.githubusercontent.com/dfcreative/audio-stats/logo.png)](https://dfcreative.github.io/audio-stats)
 
-Stats.js for web-audio. [Demo](TODO).
+Web-audio stats grapher.
 
-[Screenshots]
+* [x] Spectrum
+* [ ] Spectrogram
+* [ ] Waveform
+* [ ] Wavelet
 
-* Frequency diagram
-* Waveform diagram
+[![Code Climate](https://codeclimate.com/github/dfcreative/web-audio-stats/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/web-audio-stats) ![deps](https://david-dm.org/dfcreative/web-audio-stats.svg) [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
 
 
-`$ npm install web-audio-frequency`
+[![npm install audio-stats](https://nodei.co/npm/audio-stats.png?mini=true)](https://nodei.co/npm/audio-stats/)
+
 
 ```js
-var Stats = require('web-audio-stats');
+var Stats = require('audio-stats');
 
-var stats = new Stats(audioSource, context, options);
+var stats = new Stats(options);
+
+source.connect(stats.node);
+stats.node.connect(context.destination);
 
 document.body.appendChild(stats.element);
 ```
 
 
-### `Stats(audio, context[, options])`
+### `Stats(options?)`
 
-Stats constructor. Returns a new stats controller. Pass audio source - audio tag, stream or something else convertable to stream.
+Creates stats controller.
 
 | Option | Description |
 |---|---|
@@ -30,8 +36,7 @@ Stats constructor. Returns a new stats controller. Pass audio source - audio tag
 | `maxFrequency` | Maximum frequency to plot, by default `20000`. |
 | `minDecibels` | Minimum decibels to capture, by default `-90` |
 | `maxDecibels` | Maximum decibels to limit, by default `-30`. |
-| `mode` | `frequency` (default), `waveform`, `spectrogram`. |
-| `grid` | Display frequencies/decibels grid. |
+| `log` | Display logarithmic frequencies. Default is `true`. |
 
 
 ### `Stats.prototype.update()`
@@ -39,4 +44,6 @@ Stats constructor. Returns a new stats controller. Pass audio source - audio tag
 Recalculate style, size and position.
 
 
-[![NPM](https://nodei.co/npm/web-audio-stats.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/web-audio-stats/)
+### `Stats.prototype.on('draw', function (canvas) { /* Draw on canvas */ })`
+
+Hook for drawing additional info on the canvas.
