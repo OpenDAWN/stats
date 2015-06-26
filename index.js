@@ -34,70 +34,70 @@ function Stats (options) {
 	options = options || {};
 	extend(self, options);
 
-	this.audioContext = audioContext;
+	self.audioContext = audioContext;
 
 	//create holder
-	if (!this.element) this.element = doc.createElement('div');
-	this.element.classList.add('audio-stats');
+	if (!self.element) self.element = doc.createElement('div');
+	self.element.classList.add('audio-stats');
 
 	//create canvas
-	this.canvas = doc.createElement('canvas');
-	this.canvas.classList.add('audio-stats-canvas');
-	this.canvasContext = this.canvas.getContext('2d');
-	this.element.appendChild(this.canvas);
+	self.canvas = doc.createElement('canvas');
+	self.canvas.classList.add('audio-stats-canvas');
+	self.canvasContext = self.canvas.getContext('2d');
+	self.element.appendChild(self.canvas);
 
-	lifecycle(this.element);
+	lifecycle(self.element);
 
 	//once canvas is inserted - update it’s calc styles
-	on(this.element, 'attached', function () {
+	on(self.element, 'attached', function () {
 		self.update();
 	});
-	this.update();
+	self.update();
 
 	//update on win resize
 	on(win, 'resize', function () {
-
+		self.update();
 	});
 
 	//create analyser node
-	this.node = audioContext.createAnalyser();
-	this.node.smoothingTimeConstant = 0.8;
-	this.node.maxDecibels = this.maxDecibels;
-	this.node.minDecibels = this.minDecibels;
-	this.node.fftSize = 8192;
-	this.bufferLength = this.node.frequencyBinCount;
-	this.data = new Uint8Array(this.bufferLength);
+	self.node = audioContext.createAnalyser();
+	self.node.smoothingTimeConstant = self.smoothingTimeConstant;
+	self.node.maxDecibels = self.maxDecibels;
+	self.node.minDecibels = self.minDecibels;
+	self.node.fftSize = self.fftSize;
+	self.bufferLength = self.node.frequencyBinCount;
+	self.data = new Uint8Array(self.bufferLength);
 
 	//detect decades
-	this.decades = Math.round(lg(this.maxFrequency/this.minFrequency));
-	this.decadeOffset = lg(this.minFrequency/10);
+	self.decades = Math.round(lg(self.maxFrequency/self.minFrequency));
+	self.decadeOffset = lg(self.minFrequency/10);
 
 	//display grid
-	this.grid = doc.createElement('div');
-	this.grid.classList.add('audio-stats-grid');
+	self.grid = doc.createElement('div');
+	self.grid.classList.add('audio-stats-grid');
 
 	//show frequencies
-	for (var f = this.minFrequency; f <= this.maxFrequency; f*=10) {
+	for (var f = self.minFrequency; f <= self.maxFrequency; f*=10) {
 		var line = doc.createElement('span');
 		line.classList.add('audio-stats-line');
 		line.classList.add('audio-stats-line-h');
 		line.setAttribute('data-frequency', f);
-		line.style.left = this.map(f, 100) + '%';
-		this.grid.appendChild(line);
+		line.style.left = self.map(f, 100) + '%';
+		self.grid.appendChild(line);
 	}
 
 	//draw magnitude limits
-	var mRange = this.maxDecibels - this.minDecibels;
-	for (var m = this.minDecibels, i = 0; m <= this.maxDecibels; m += 10, i += 10) {
+	var mRange = self.maxDecibels - self.minDecibels;
+	for (var m = self.minDecibels, i = 0; m <= self.maxDecibels; m += 10, i += 10) {
 		var line = doc.createElement('span');
 		line.classList.add('audio-stats-line');
 		line.classList.add('audio-stats-line-v');
 		line.setAttribute('data-magnitude', m);
 		line.style.bottom = 100 * i / mRange + '%';
-		this.grid.appendChild(line);
+		self.grid.appendChild(line);
 	}
 
-	this.element.appendChild(this.grid);
+	self.element.appendChild(self.grid);
 
 
 	//render spectrum
@@ -171,6 +171,10 @@ proto.maxFrequency = 20000;
 /** Magnitude limits */
 proto.maxDecibels = -30;
 proto.minDecibels = -90;
+
+/** Other params */
+proto.fftSize = 8192;
+proto.smoothingTimeConstant = 0.8;
 
 
 /** Map frequency to an x coord */

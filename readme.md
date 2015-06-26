@@ -39,6 +39,8 @@ Creates stats controller.
 | `maxFrequency` | Maximum frequency to plot, by default `20000`. |
 | `minDecibels` | Minimum decibels to capture, by default `-90` |
 | `maxDecibels` | Maximum decibels to limit, by default `-30`. |
+| `fftSize` | Number of frequencies to catch. Default is `8192`. |
+| `smoothingTimeConstant` | Smoothing constant. Default is `0.8` |
 | `log` | Display logarithmic frequencies. Default is `true`. |
 
 
