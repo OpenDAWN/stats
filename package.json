@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "watchify -r ./index.js:audio-stats -r audio-context -r queried -r emmy/on -r draggy -d -o ./bundle.js"
   },
+  "files": ["index.js", "index.css"],
   "style": "index.css",
   "repository": {
     "type": "git",
